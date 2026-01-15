@@ -1,4 +1,35 @@
+html {
+  border-radius: 10px;
+  border: 7px solid #000000;
+  height: 100%;
+  box-sizing: border-box;
+  box-shadow: inset 1px 1px 3px #000000;
+}
+
 body {
+    font-family: "Montserrat", sans-serif;
     text-align: center;
-    background: rgb(54, 37, 12);
+    background: linear-gradient(to right, #041c05, #052f0e);
+    color: white;
+}
+
+#titleHeader {
+    color: rgb(217, 217, 217);
+    font-family: "Montserrat", sans-serif;
+    font-size: 2.3vw;
+    display: inline-block;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: none;
+    border-radius: 20px;
+    background: none;
+    box-shadow: 0 0 3px 3px rgb(0, 0, 0);
+
+    /* border: 1px solid rgba(135, 13, 13, 0.533);
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px; */
 }
