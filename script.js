@@ -13,7 +13,7 @@ async function uploadTryOn() {
     form.append("pose", document.getElementById("pose").value);
     form.append("background", document.getElementById("background").value);
 
-    const domain = "https://thechangingroom.shop"; // your live domain
+    const domain = "https://api.thechangingroom.shop"; // your live domain
     console.log("Uploading to:", `${domain}/tryon`);
     console.log("FormData keys:", [...form.entries()]);
 
