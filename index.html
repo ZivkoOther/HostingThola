@@ -1,38 +1,13 @@
-<div class="container">
-        <div class="header">
-            <h1>Upload Your Files</h1>
-            <p>Drag and drop your files or browse to upload</p>
-        </div>
+<!DOCTYPE html>
+<html>
+<body>
 
-        <div class="upload-card">
-            <div class="file-count" id="fileCount" style="display: none;">0 files</div>
-            
-            <div class="drop-zone" id="dropZone">
-                <div class="drop-zone-content">
-                    <div class="upload-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                    </div>
-                    <h3>Drop your files here</h3>
-                    <p>or click to browse from your device</p>
-                    <button class="browse-btn" type="button">Browse Files</button>
-                    <div class="file-info">Supports: PDF, DOC, DOCX, JPG, PNG (Max 10MB)</div>
-                </div>
-                <input type="file" class="file-input" id="fileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-            </div>
+<form action="/upload.php" method="post" enctype="multipart/form-data">
+  <h2>Upload File</h2>
+  <label for="file">Choose file to upload:</label>
+  <input type="file" id="file" name="fileToUpload">
+  <input type="submit" value="Upload File" name="submit">
+</form>
 
-            <div class="files-list" id="filesList"></div>
-
-            <div class="submit-section" id="submitSection" style="display: none;">
-                <button class="clear-btn" id="clearBtn">Clear All</button>
-                <button class="submit-btn" id="submitBtn">
-                    <span>Upload Files</span>
-                </button>
-            </div>
-
-            <div id="successMessage"></div>
-        </div>
-    </div>
+</body>
+</html>
