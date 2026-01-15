@@ -7,18 +7,22 @@ async function uploadTryOn() {
         return;
     }
 
+    // Prepare form data
     const form = new FormData();
     form.append("model", modelFile);
     form.append("clothing", clothingFile);
     form.append("pose", document.getElementById("pose").value);
     form.append("background", document.getElementById("background").value);
 
-    const tunnelURL = "https://eaaa8f3a4d75.ngrok-free.app"; // your ngrok URL
-    console.log("Uploading to:", `${tunnelURL}/tryon`);
+    // Use your deployed domain
+    const domain = "https://thechangingroom.shop";
+    const endpoint = `${domain}/tryon`;
+
+    console.log("Uploading to:", endpoint);
     console.log("FormData keys:", [...form.entries()]);
 
     try {
-        const res = await fetch(`${tunnelURL}/tryon`, {
+        const res = await fetch(endpoint, {
             method: "POST",
             body: form
         });
@@ -30,13 +34,14 @@ async function uploadTryOn() {
         const data = await res.json();
         console.log("Parsed JSON:", data);
 
-        // Full public URLs for preview
-        const fullModelURL = tunnelURL + data.model_url;
-        const fullClothingURL = tunnelURL + data.clothing_url;
-        document.getElementById("modelPreview").src = fullModelURL;
-        document.getElementById("clothingPreview").src = fullClothingURL;
+        // Construct full public URLs for previews
+        const modelPreviewURL = domain + data.model_url;
+        const clothingPreviewURL = domain + data.clothing_url;
 
-        // Show Claid result
+        document.getElementById("modelPreview").src = modelPreviewURL;
+        document.getElementById("clothingPreview").src = clothingPreviewURL;
+
+        // Show Claid result if available
         if (data.result_url) {
             document.getElementById("result").src = data.result_url;
             document.getElementById("status").textContent = "✅ Try-On Generated!";
@@ -46,6 +51,6 @@ async function uploadTryOn() {
 
     } catch (err) {
         console.error("Upload failed:", err);
-        document.getElementById("status").textContent = "❌ Upload failed. Check console.";
+        document.getElementById("status").textContent = "❌ Upload failed. Check console for details.";
     }
 }
