@@ -14,7 +14,7 @@ body {
     color: white;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 481px) {
     #forModel {
         color: rgb(200, 201, 167);
         font-size: 2vw;
