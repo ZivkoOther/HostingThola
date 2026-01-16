@@ -14,8 +14,13 @@
         <!-- <input type="file" id="fileInput" accept=".jpg,.png,image/jpeg,image/png" hidden>
         <label for="fileInput" class="upload-btn">Choose model to upload</label> -->
 
-        <input type="file" id="model">
-        <input type="file" id="clothing">
+        
+        <label for="model">Upload model</label>
+        <input type="file" id="model" hidden>
+
+
+        <input type="text" id="clothing">
+
         <input type="text" id="pose" value="full body, front view">
         <input type="text" id="background" value="minimalistic studio, realistic">
         <button onclick="uploadTryOn()">Generate Try-On</button>

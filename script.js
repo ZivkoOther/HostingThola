@@ -1,44 +1,32 @@
 async function uploadTryOn() {
-    const modelFile = document.getElementById("model").files[0];
-    const clothingFile = document.getElementById("clothing").files[0];
+    const modelFile = document.getElementById("model").files[0]; // model file
+    const clothingUrl = document.getElementById("clothing").value; // clothing URL
 
-    if (!modelFile || !clothingFile) {
-        alert("Please select both model and clothing images");
+    if (!modelFile || !clothingUrl) {
+        alert("Please select a model file and enter a clothing URL");
         return;
     }
 
     const form = new FormData();
-    form.append("model", modelFile);
-    form.append("clothing", clothingFile);
+    form.append("model", modelFile);     // file upload
+    form.append("clothing", clothingUrl); // string URL
     form.append("pose", document.getElementById("pose").value);
     form.append("background", document.getElementById("background").value);
 
     const domain = "https://thechangingroom.shop";
-    document.getElementById("status").textContent = "⏳ Uploading...";
 
     try {
-        const res = await fetch(`${domain}/tryon`, {
-            method: "POST",
-            body: form
-        });
-
+        const res = await fetch(`${domain}/tryon`, { method: "POST", body: form });
         const data = await res.json();
-        console.log("Response:", data);
 
         if (!res.ok || data.error) {
-            document.getElementById("status").textContent =
-                "❌ " + (data.error || "Try-on failed");
+            document.getElementById("status").textContent = "❌ " + (data.error || "Try-on failed");
             return;
         }
 
-        if (data.model_url) {
-            document.getElementById("modelPreview").src = domain + data.model_url;
-        }
-
-        if (data.clothing_url) {
-            document.getElementById("clothingPreview").src = domain + data.clothing_url;
-        }
-
+        // Previews
+        if (data.model_url) document.getElementById("modelPreview").src = data.model_url;
+        if (data.clothing_url) document.getElementById("clothingPreview").src = data.clothing_url;
         if (data.result_url) {
             document.getElementById("result").src = data.result_url;
             document.getElementById("status").textContent = "✅ Try-On Generated!";
@@ -58,13 +46,11 @@ async function uploadTryOn() {
                 URL.revokeObjectURL(url);
             };
         } else {
-            document.getElementById("status").textContent =
-                "⏳ Processing with Claid...";
+            document.getElementById("status").textContent = "⏳ Processing with Claid...";
         }
 
     } catch (err) {
         console.error(err);
-        document.getElementById("status").textContent =
-            "❌ Network or server error";
+        document.getElementById("status").textContent = "❌ Network or server error";
     }
 }
