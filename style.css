@@ -9,6 +9,7 @@ html {
 body {
     font-family: "Montserrat", sans-serif;
     text-align: center;
+    align-items: center;
     background: linear-gradient(to right, #041c05, #052f0e);
     color: white;
 }
@@ -16,13 +17,13 @@ body {
 @media screen and (min-width: 768px) {
     #forModel {
         color: rgb(200, 201, 167);
-        font-size: 30px;
+        font-size: 2vw;
         position: relative;
     }
     #titleHeader {
         color: rgb(217, 217, 217);
         font-family: "Montserrat", sans-serif;
-        font-size: 2.3vw;
+        font-size: 2vw;
         display: inline-block;
         padding-left: 10px;
         padding-right: 10px;
@@ -38,9 +39,7 @@ body {
 @media screen and (min-width: 480px) and (max-width: 767px) {
   #forModel {
     color: rgb(200, 201, 167);
-    font-size: 30px;
-    position: relative;
-    left: 48%;
+    font-size: 1.7vw;
   }
   #titleHeader {
     color: rgb(217, 217, 217);
