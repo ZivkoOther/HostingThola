@@ -41,7 +41,8 @@ body {
   #forModel {
     color: rgb(200, 201, 167);
     font-size: 17px;
-    display: inline-block;
+    display: flex;
+  justify-content: center;
   }
   #titleHeader {
     color: rgb(217, 217, 217);
