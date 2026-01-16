@@ -19,7 +19,8 @@ body {
         color: rgb(200, 201, 167);
         font-size: 2vw;
         position: relative;
-        display: flex
+        display: flex;
+        text-align: center;
     }
     #titleHeader {
         color: rgb(217, 217, 217);
