@@ -9,7 +9,6 @@ html {
 body {
     font-family: "Montserrat", sans-serif;
     text-align: center;
-    align-items: center;
     background: linear-gradient(to right, #041c05, #052f0e);
     color: white;
 }
@@ -18,10 +17,10 @@ body {
     #forModel {
         color: rgb(200, 201, 167);
         font-size: 2vw;
-        position: relative;
         display: flex;
         text-align: center;
     }
+
     #titleHeader {
         color: rgb(217, 217, 217);
         font-family: "Montserrat", sans-serif;
@@ -41,7 +40,7 @@ body {
 @media screen and (max-width: 480px) {
   #forModel {
     color: rgb(200, 201, 167);
-    font-size: 5px;
+    font-size: 17px;
     display: flex
   }
   #titleHeader {
