@@ -38,7 +38,7 @@ body {
     }
 }
 
-@media screen and (max-width: 480px) and (min-width: 320px) {
+@media screen and (max-width: 480px) and (min-width: 767px) {
   #forModel {
     color: rgb(200, 201, 167);
     font-size: 30px;
