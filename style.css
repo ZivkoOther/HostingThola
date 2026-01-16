@@ -19,6 +19,7 @@ body {
         color: rgb(200, 201, 167);
         font-size: 2vw;
         position: relative;
+        display: flex
     }
     #titleHeader {
         color: rgb(217, 217, 217);
@@ -40,6 +41,7 @@ body {
   #forModel {
     color: rgb(200, 201, 167);
     font-size: 5px;
+    display: flex
   }
   #titleHeader {
     color: rgb(217, 217, 217);
