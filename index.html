@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
         </style>
@@ -15,9 +16,8 @@
         <label for="fileInput" class="upload-btn">Choose model to upload</label> -->
 
         
-        <label for="model">Upload model</label>
+        <label id="forModel" for="model">Upload model</label>
         <input type="file" id="model" hidden>
-
 
         <input type="text" id="clothing">
 
@@ -35,7 +35,7 @@
 
         <p id="status"></p>
         <img id="result" style="max-width:400px; display:block;">
-        
+ 
         <script src="script.js"></script>
 
     </body>
