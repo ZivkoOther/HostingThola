@@ -13,9 +13,8 @@ async function uploadTryOn() {
     form.append("pose", document.getElementById("pose").value);
     form.append("background", document.getElementById("background").value);
 
-    const domain = "https://thechangingroom.shop"; // your live domain
-    console.log("Uploading to:", `${domain}/tryon`);
-    console.log("FormData keys:", [...form.entries()]);
+    const domain = "https://thechangingroom.shop";
+    document.getElementById("status").textContent = "⏳ Uploading...";
 
     try {
         const res = await fetch(`${domain}/tryon`, {
@@ -23,46 +22,49 @@ async function uploadTryOn() {
             body: form
         });
 
-        console.log("Raw response status:", res.status);
-        const text = await res.clone().text();
-        console.log("Raw response text:", text);
-
         const data = await res.json();
-        console.log("Parsed JSON:", data);
+        console.log("Response:", data);
 
-        // Full public URLs for preview
-        const fullModelURL = domain + data.model_url;
-        const fullClothingURL = domain + data.clothing_url;
-        document.getElementById("modelPreview").src = fullModelURL;
-        document.getElementById("clothingPreview").src = fullClothingURL;
+        if (!res.ok || data.error) {
+            document.getElementById("status").textContent =
+                "❌ " + (data.error || "Try-on failed");
+            return;
+        }
 
-        // Show Claid result
+        if (data.model_url) {
+            document.getElementById("modelPreview").src = domain + data.model_url;
+        }
+
+        if (data.clothing_url) {
+            document.getElementById("clothingPreview").src = domain + data.clothing_url;
+        }
+
         if (data.result_url) {
             document.getElementById("result").src = data.result_url;
             document.getElementById("status").textContent = "✅ Try-On Generated!";
 
-            // Make result downloadable
             const downloadBtn = document.getElementById("downloadBtn");
             downloadBtn.style.display = "inline-block";
             downloadBtn.onclick = async () => {
-                const imageResp = await fetch(data.result_url);
-                const blob = await imageResp.blob();
+                const img = await fetch(data.result_url);
+                const blob = await img.blob();
                 const url = URL.createObjectURL(blob);
 
                 const a = document.createElement("a");
                 a.href = url;
                 a.download = "try_on.png";
-                document.body.appendChild(a);
                 a.click();
-                document.body.removeChild(a);
+
                 URL.revokeObjectURL(url);
             };
         } else {
-            document.getElementById("status").textContent = "✅ Upload successful! Waiting for Claid result...";
+            document.getElementById("status").textContent =
+                "⏳ Processing with Claid...";
         }
 
     } catch (err) {
-        console.error("Upload failed:", err);
-        document.getElementById("status").textContent = "❌ Upload failed. Check console.";
+        console.error(err);
+        document.getElementById("status").textContent =
+            "❌ Network or server error";
     }
 }
