@@ -16,9 +16,8 @@ async function uploadTryOn() {
     const domain = "https://thechangingroom.shop";
 
     try {
-        const fd = new FormData();
-        fd.append("model", file);
-        fd.append("clothing", clothingUrl);
+        form.append("model", file);
+        form.append("clothing", clothingUrl);
 
         const res = await fetch("https://YOUR-RENDER-URL/tryon", {
             method: "POST",
