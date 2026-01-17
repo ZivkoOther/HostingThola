@@ -16,8 +16,17 @@ async function uploadTryOn() {
     const domain = "https://thechangingroom.shop";
 
     try {
-        const res = await fetch(`${domain}/tryon`, { method: "POST", body: form });
+        const fd = new FormData();
+        fd.append("model", file);
+        fd.append("clothing", clothingUrl);
+
+        const res = await fetch("https://YOUR-RENDER-URL/tryon", {
+            method: "POST",
+            body: fd
+        });
+
         const data = await res.json();
+
 
         if (!res.ok || data.error) {
             document.getElementById("status").textContent = "❌ " + (data.error || "Try-on failed");
