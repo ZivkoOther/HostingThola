@@ -1,6 +1,6 @@
 async function uploadTryOn() {
-    const modelFile = document.getElementById("model").files[0]; // model file
-    const clothingUrl = document.getElementById("clothing").value; // clothing URL
+    const modelFile = document.getElementById("model").files[0];
+    const clothingUrl = document.getElementById("clothing").value;
 
     if (!modelFile || !clothingUrl) {
         alert("Please select a model file and enter a clothing URL");
@@ -8,8 +8,8 @@ async function uploadTryOn() {
     }
 
     const form = new FormData();
-    form.append("model", modelFile);     // file upload
-    form.append("clothing", clothingUrl); // string URL
+    form.append("model", modelFile);
+    form.append("clothing", clothingUrl);
     form.append("pose", document.getElementById("pose").value);
     form.append("background", document.getElementById("background").value);
 
@@ -24,11 +24,10 @@ async function uploadTryOn() {
             return;
         }
 
-        // Previews
         if (data.model_url) document.getElementById("modelPreview").src = data.model_url;
         if (data.clothing_url) document.getElementById("clothingPreview").src = data.clothing_url;
         if (data.result_url) {
-            document.getElementById("result").src = data.result_url;
+            document.getElementById("result").src = data.result_url;    
             document.getElementById("status").textContent = "✅ Try-On Generated!";
 
             const downloadBtn = document.getElementById("downloadBtn");
