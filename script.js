@@ -1,6 +1,7 @@
 async function uploadTryOn() {
     const modelFile = document.getElementById("model").files[0];
     const clothingUrl = document.getElementById("clothing").value;
+    const clothingPreview = document.getElementById("clothingPreview");
 
     if (!modelFile || !clothingUrl) {
         alert("Please select a model file and enter a clothing URL");
@@ -16,6 +17,7 @@ async function uploadTryOn() {
     const domain = "https://thechangingroom.shop";
 
     try {
+        clothingPreview.src = clothingUrl;
         form.append("model", file);
         form.append("clothing", clothingUrl);
 
