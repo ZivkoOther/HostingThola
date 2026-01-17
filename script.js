@@ -19,7 +19,7 @@ async function uploadTryOn() {
   status.textContent = "⏳ Uploading...";
 
   try {
-    const res = await fetch("https://REPLACE-WITH-YOUR-RENDER-URL/tryon", {
+    const res = await fetch("https://api.thechangingroom.shop/tryon", {
       method: "POST",
       body: form
     });
