@@ -10,8 +10,10 @@
     <body>
 
         <h1 id="titleHeader">The Changing Room</h1>
-        
-        <label id="forModel" for="model">Upload model</label>
+
+        <div id="forForModel">
+            <label id="forModel" for="model">Upload model</label>
+        </div>
         <input type="file" id="model" hidden>
 
         <label id="forClothing" for="clothing">Image address:</label>
@@ -19,13 +21,13 @@
 
         <input type="text" id="pose" value="full body, front view" hidden>
         <input type="text" id="background" value="minimalistic studio, realistic" hidden>
-        <button onclick="uploadTryOn()">Generate Try-On</button>
+        <button id="generateTryon" onclick="uploadTryOn()">Generate Try-On</button>
 
         <p id="status"></p>
 
-        <img id="modelPreview" width="150" alt="Model Preview">
-        <img id="clothingPreview" width="150" alt="Clothing Preview">
-        <img id="result" width="300" alt="Generated Try-On">
+        <img id="modelPreview" width="150" alt="Model Preview" src="">
+        <img id="clothingPreview" width="150" alt="Clothing Preview" src="">
+        <img id="result" width="300" alt="Generated Try-On" src="">
         <p id="status"></p>
         <button id="downloadBtn" style="display:none;">Download Try-On</button>
 

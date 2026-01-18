@@ -14,12 +14,23 @@ body {
 }
 
 @media screen and (min-width: 481px) {
+    #forForModel {
+      background-color: none;
+      display: flex;
+      justify-content: center;
+    }
     #forModel {
+      background-color: black;
       color: rgb(200, 201, 167);
+      display: inline-block;
       font-size: 2vw;
       display: flex;
       justify-content: center;
-  }
+    }
+    #forModel:hover {
+      cursor: pointer;
+      opacity: 80%;
+    }
 
     #titleHeader {
       color: rgb(217, 217, 217);
@@ -35,11 +46,18 @@ body {
       background: none;
       box-shadow: 0 0 3px 3px rgb(0, 0, 0);
     }
+
+    #upgradeButton:hover {
+      cursor: pointer;
+      opacity: 80%;
+    }
     #upgradeButton {
       color: rgb(197, 10, 10);
       font-family: "Montserrat", sans-serif;
       font-size: 1vw;
-      justify-content: right;
+      position: absolute;
+      right: 40px;
+      top: 20px;
       padding-left: 10px;
       padding-right: 10px;
       padding-top: 5px;
@@ -48,6 +66,15 @@ body {
       border-radius: 10px;
       background: black;
     }
+    #generateTryon {
+      background-color: ;
+    }
+
+    #generateTryon:hover {
+      cursor: pointer;
+      opacity: 90%;
+    }
+
 }
 
 @media screen and (max-width: 480px) {

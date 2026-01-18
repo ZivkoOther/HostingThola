@@ -32,7 +32,7 @@ async function uploadTryOn() {
     const data = await res.json();
 
     if (data.model_url) document.getElementById("modelPreview").src = data.model_url;
-    if (data.clothing_url) document.getElementById("clothingPreview").src = data.clothing_url;
+    if (data.clothing_url) document.getElementById("clothingPreview").src = clothingUrl.text  ;
 
     if (data.result_url) {
       document.getElementById("result").src = data.result_url;
