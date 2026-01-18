@@ -15,31 +15,45 @@ body {
 
 @media screen and (min-width: 481px) {
     #forModel {
-        color: rgb(200, 201, 167);
-        font-size: 2vw;
-        display: flex;
-        justify-content: center;
-    }
+      color: rgb(200, 201, 167);
+      font-size: 2vw;
+      display: flex;
+      justify-content: center;
+  }
 
     #titleHeader {
-        color: rgb(217, 217, 217);
-        font-family: "Montserrat", sans-serif;
-        font-size: 2vw;
-        display: inline-block;
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        border: none;
-        border-radius: 20px;
-        background: none;
-        box-shadow: 0 0 3px 3px rgb(0, 0, 0);
+      color: rgb(217, 217, 217);
+      font-family: "Montserrat", sans-serif;
+      font-size: 2vw;
+      display: inline-block;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      border: none;
+      border-radius: 20px;
+      background: none;
+      box-shadow: 0 0 3px 3px rgb(0, 0, 0);
+    }
+    #upgradeButton {
+      color: rgb(197, 10, 10);
+      font-family: "Montserrat", sans-serif;
+      font-size: 1vw;
+      display: inline-block;
+      justify-content: right;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      border: white;
+      border-radius: 10px;
+      background: black;
     }
 }
 
 @media screen and (max-width: 480px) {
   #forModel {
-    color: rgb(182, 188, 17);
+    color: rgb(200, 201, 167);
     font-size: 17px;
     display: flex;
     justify-content: center;
