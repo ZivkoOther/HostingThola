@@ -1,61 +1,98 @@
 async function uploadTryOn() {
-  const modelFile = document.getElementById("model").files[0];
-  const clothingUrl = document.getElementById("clothing").value;
-  const pose = document.getElementById("pose").value;
-  const background = document.getElementById("background").value;
-  const status = document.getElementById("status");
+  const modelInput = document.getElementById("model");
+  const clothingInput = document.getElementById("clothing");
+  const poseInput = document.getElementById("pose");
+  const backgroundInput = document.getElementById("background");
 
-  if (!modelFile || !clothingUrl) {
-    alert("Please select a model file and enter a clothing URL");
+  const status = document.getElementById("status");
+  const modelPreview = document.getElementById("modelPreview");
+  const clothingPreview = document.getElementById("clothingPreview");
+  const resultImg = document.getElementById("result");
+  const downloadBtn = document.getElementById("downloadBtn");
+
+  const modelFile = modelInput.files[0];
+  const clothingFile = clothingInput.files[0];
+
+  // --------------------
+  // Validation
+  // --------------------
+  if (!modelFile || !clothingFile) {
+    alert("Please upload both a model image and a clothing image.");
     return;
   }
 
-  const form = new FormData();
-  form.append("model", modelFile);
-  form.append("clothing", clothingUrl);
-  form.append("pose", pose);
-  form.append("background", background);
+  if (!modelFile.type.startsWith("image/") || !clothingFile.type.startsWith("image/")) {
+    alert("Both files must be images.");
+    return;
+  }
 
-  status.textContent = "⏳ Uploading...";
+  // --------------------
+  // Previews
+  // --------------------
+  modelPreview.src = URL.createObjectURL(modelFile);
+  clothingPreview.src = URL.createObjectURL(clothingFile);
 
+  resultImg.src = "";
+  downloadBtn.style.display = "none";
+
+  // --------------------
+  // Build form data
+  // --------------------
+  const formData = new FormData();
+  formData.append("model", modelFile);
+  formData.append("clothing", clothingFile);
+  formData.append("pose", poseInput?.value || "full body, front view");
+  formData.append("background", backgroundInput?.value || "minimalistic studio");
+
+  status.textContent = "⏳ Uploading and processing...";
+
+  // --------------------
+  // Send request
+  // --------------------
   try {
     const res = await fetch("https://api.thechangingroom.shop/tryon", {
       method: "POST",
-      body: form
+      body: formData
     });
 
     if (!res.ok) {
       const text = await res.text();
-      throw new Error(text);
+      throw new Error(text || "Server error");
     }
 
     const data = await res.json();
 
-    if (data.model_url) document.getElementById("modelPreview").src = data.model_url;
-    if (data.clothing_url) document.getElementById("clothingPreview").src = clothingUrl.text  ;
-
-    if (data.result_url) {
-      document.getElementById("result").src = data.result_url;
-      status.textContent = "✅ Try-On Generated!";
-
-      const downloadBtn = document.getElementById("downloadBtn");
-      downloadBtn.style.display = "inline-block";
-      downloadBtn.onclick = async () => {
-        const img = await fetch(data.result_url);
-        const blob = await img.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "try_on.png";
-        a.click();
-        URL.revokeObjectURL(url);
-      };
-    } else {
-      status.textContent = "⏳ Processing with Claid...";
+    if (!data.result_url) {
+      throw new Error("No result image returned from server.");
     }
 
+    // --------------------
+    // Show result
+    // --------------------
+    resultImg.src = data.result_url;
+    status.textContent = "✅ Try-On Generated!";
+
+    // --------------------
+    // Download button
+    // --------------------
+    downloadBtn.style.display = "inline-block";
+    downloadBtn.onclick = async () => {
+      const response = await fetch(data.result_url);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "try_on.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+    };
+
   } catch (err) {
-    console.error(err);
+    console.error("TRY-ON ERROR:", err);
     status.textContent = "❌ " + err.message;
   }
 }
