@@ -3,6 +3,11 @@ async function uploadTryOn() {
   const clothing = document.getElementById("clothing").files[0];
   const status = document.getElementById("status");
   const resultImg = document.getElementById("result");
+  const modelImage = document.getElementById("modelPreview")
+  const clothingImage = document.getElementById("clothingPreview")
+
+  modelImage.src = model;
+  clothingImage.src = clothing;
 
   if (!model || !clothing) {
     alert("Upload both images");
@@ -13,7 +18,7 @@ async function uploadTryOn() {
   formData.append("model", model);
   formData.append("clothing", clothing);
 
-  status.textContent = "⏳ Uploading...";
+  status.textContent = "Uploading...";
 
   const res = await fetch("https://api.thechangingroom.shop/tryon", {
     method: "POST",
@@ -23,7 +28,7 @@ async function uploadTryOn() {
   const data = await res.json();
   const jobId = data.job_id;
 
-  status.textContent = "🧠 Generating try-on...";
+  status.textContent = "Generating try-on...";
 
   const interval = setInterval(async () => {
     const res = await fetch(
