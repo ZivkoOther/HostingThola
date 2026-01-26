@@ -119,4 +119,19 @@ body {
     background: none;
     box-shadow: 0 0 3px 3px rgb(0, 0, 0);
   }
+  #upgradeButton {
+      color: rgb(197, 10, 10);
+      font-family: "Montserrat", sans-serif;
+      font-size: 1vw;
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      border: white;
+      border-radius: 10px;
+      background: black;
+    }
 }
