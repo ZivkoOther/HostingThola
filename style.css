@@ -96,6 +96,11 @@ body {
       opacity: 90%;
     }
 
+    #attribute {
+      position: absolute;
+      bottom: 10px;
+    }
+
 }
 
 @media screen and (max-width: 480px) {
