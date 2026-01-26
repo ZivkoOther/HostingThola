@@ -13,9 +13,27 @@ body {
     color: white;
 }
 
+#status {
+  animation: color-blink 2s infinite step-start;
+}
+@keyframes color-blink {
+  0% {
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+  }
+  50% {
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0.5;
+  }
+  100% {
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+  }
+}
+
 @media screen and (min-width: 481px) {
     #forForModel {
-      background-color: none;
+      background-color: transparent;
       display: flex;
       justify-content: center;
     }
@@ -155,6 +173,5 @@ body {
     #generateTryon {
       position: fixed;
       bottom: 30px;
-      align-content: center;
     }
 }
