@@ -154,7 +154,7 @@ body {
     }
     #generateTryon {
       position: fixed;
-      bottom: 5px;
+      bottom: 30px;
       align-content: center;
     }
 }
