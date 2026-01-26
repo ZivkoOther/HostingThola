@@ -6,13 +6,15 @@ async function uploadTryOn() {
   const modelImage = document.getElementById("modelPreview")
   const clothingImage = document.getElementById("clothingPreview")
 
-  modelImage.src = URL.createObjectURL(model);
-  clothingImage.src = URL.createObjectURL(clothing);
-
   if (!model || !clothing) {
     alert("Upload both images");
     return;
   }
+
+  modelImage.hidden = false;
+  clothingImage.hidden = false;
+  modelImage.src = URL.createObjectURL(model);
+  clothingImage.src = URL.createObjectURL(clothing);
 
   const formData = new FormData();
   formData.append("model", model);
