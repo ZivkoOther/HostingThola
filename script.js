@@ -6,8 +6,8 @@ async function uploadTryOn() {
   const modelImage = document.getElementById("modelPreview")
   const clothingImage = document.getElementById("clothingPreview")
 
-  modelImage.src = model;
-  clothingImage.src = clothing;
+  modelImage.src = URL.createObjectURL(model);
+  clothingImage.src = URL.createObjectURL(clothing);
 
   if (!model || !clothing) {
     alert("Upload both images");
@@ -24,6 +24,8 @@ async function uploadTryOn() {
     method: "POST",
     body: formData
   });
+
+  if (!res.ok) throw new Error("Upload failed");
 
   const data = await res.json();
   const jobId = data.job_id;
