@@ -134,6 +134,10 @@ body {
     }
 }
 
+
+
+
+
 @media screen and (max-width: 480px) {
   #forForModel {
     background-color: black;
@@ -142,6 +146,9 @@ body {
     display: flex;
     align-items: center;
     border-radius: 10px;
+    position: fixed;
+    bottom: 200px;
+    right: 20%;
   }
   #forForClothing {
     background-color: black;
@@ -150,6 +157,9 @@ body {
     display: flex;
     align-items: center;
     border-radius: 10px;
+    position: fixed;
+    bottom: 200px;
+    left: 20%;
   }
   #forModel {
     color: rgb(255, 255, 255);
