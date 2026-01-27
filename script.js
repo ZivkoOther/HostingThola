@@ -7,7 +7,7 @@ async function uploadTryOn() {
   const clothingImage = document.getElementById("clothingPreview")
 
   if (!model || !clothing) {
-    alert("Upload both images");
+    alert("thechangingroom");
     return;
   }
 
