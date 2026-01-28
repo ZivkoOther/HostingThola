@@ -1,5 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-
 // ---------- Supabase setup ----------
 const supabase = createClient(
   'https://gneuratxejzbyhgpzatk.supabase.co',
