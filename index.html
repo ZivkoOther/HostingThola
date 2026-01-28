@@ -1,175 +1,121 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-        <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');</style>
-        <link rel="stylesheet" href="style.css">
-        <title>TheChangingRoom</title>
-    </head>
-    <body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+    <link rel="stylesheet" href="style.css" />
+    <title>TheChangingRoom</title>
+  </head>
+  <body>
 
-        <h1 id="titleHeader">The Changing Room</h1>
+    <h1 id="titleHeader">The Changing Room</h1>
 
-        <div id="forForModel">
-            <label id="forModel" for="model">Upload model</label>
-        </div>
-        <input type="file" id="model" accept="image/*" hidden>
+    <div id="forForModel">
+      <label id="forModel" for="model">Upload model</label>
+    </div>
+    <input type="file" id="model" accept="image/*" hidden />
 
-        <div id="forForClothing">
-            <label id="forClothing" for="clothing">Upload clothing</label>
-        </div>
-        <input type="file" id="clothing" accept="image/*" hidden>
+    <div id="forForClothing">
+      <label id="forClothing" for="clothing">Upload clothing</label>
+    </div>
+    <input type="file" id="clothing" accept="image/*" hidden />
 
-        <input type="text" id="pose" value="full body, front view" hidden>
-        <input type="text" id="background" value="nice studio with some objects, realistic" hidden>
-        <button id="generateTryon" onclick="uploadTryOn()">Generate Try-On</button>
+    <button id="generateTryon">Generate Try-On</button>
 
-        <p id="status"></p>
+    <p id="status"></p>
 
-        <div class="previewGrid">
-            <img id="modelPreview" width="150" alt="Model Preview" src="" class="snap" hidden>
-            <img id="clothingPreview" width="150" alt="Clothing Preview" src="" class="snap" hidden>
-            <img id="result" width="300" alt="Generated Try-On" src="" class="snap" hidden>
-        </div>
-        
-        <button id="downloadBtn" style="display:none;">Download Try-On</button>
+    <div class="previewGrid">
+      <img id="modelPreview" width="150" hidden />
+      <img id="clothingPreview" width="150" hidden />
+      <img id="result" width="300" hidden />
+    </div>
 
-        <button id="upgradeButton">Upgrade Plan</button>
-        <p id="attribute">Powered by Claid AI</p>
-        <button id="loginWithGoogle">Login with Google</button>
- 
-        <!-- <script type="module" src="script.js"></script> -->
-        <script type="module">
-            import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    <button id="upgradeButton">Upgrade Plan</button>
+    <button id="loginWithGoogle">Login with Google</button>
 
-            const supabase = createClient(
-                'https://gneuratxejzbyhgpzatk.supabase.co',
-                'sb_publishable_U3sKYX4eq4H5Bslfu0ErJA_ts8-8hT0'
-            );
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-            let accessToken = null; // store JWT after login
+      const supabase = createClient(
+        "https://gneuratxejzbyhgpzatk.supabase.co",
+        "sb_publishable_U3sKYX4eq4H5Bslfu0ErJA_ts8-8hT0"
+      );
 
-            // ---------- Google login ----------
-            async function signInWithGoogle() {
-            const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                redirectTo: "https://thechangingroom.shop/"
-                }
-            });
+      let accessToken = null;
 
-            if (error) return console.error("Login error:", error);
+      const status = document.getElementById("status");
+      const loginBtn = document.getElementById("loginWithGoogle");
+      const generateBtn = document.getElementById("generateTryon");
 
-            console.log("Redirecting to Google login...");
-            }
-            
-            // Listen to login button
-            document.getElementById("loginWithGoogle").addEventListener("click", signInWithGoogle);
+      // ---------- LOGIN ----------
+      loginBtn.onclick = async () => {
+        await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: "https://thechangingroom.shop/"
+          }
+        });
+      };
 
-            // ---------- Auth session check ----------
-            supabase.auth.onAuthStateChange((event, session) => {
-            if (session?.access_token) {
-                accessToken = session.access_token;
-                console.log("Logged in as:", session.user.email);
-                document.getElementById("loginStatus").textContent = `Logged in as ${session.user.email}`;
-            }
-            });
+      // ---------- AUTH STATE ----------
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (session?.access_token) {
+          accessToken = session.access_token;
+          status.textContent = `Logged in as ${session.user.email}`;
+          loginBtn.style.display = "none";
+        }
+      });
 
-            // ---------- Try-on upload ----------
-            async function uploadTryOn() {
-            const model = document.getElementById("model").files[0];
-            const clothing = document.getElementById("clothing").files[0];
-            const status = document.getElementById("status");
-            const resultImg = document.getElementById("result");
-            const modelImage = document.getElementById("modelPreview");
-            const clothingImage = document.getElementById("clothingPreview");
+      // ---------- TRYON ----------
+      generateBtn.onclick = async () => {
+        if (!accessToken) {
+          alert("Login first");
+          return;
+        }
 
-            if (!accessToken) {
-                alert("You must be logged in to generate a try-on!");
-                return;
-            }
+        const model = document.getElementById("model").files[0];
+        const clothing = document.getElementById("clothing").files[0];
 
-            if (!model || !clothing) {
-                alert("Select both images");
-                return;
-            }
+        if (!model || !clothing) {
+          alert("Select both images");
+          return;
+        }
 
-            // preview
-            modelImage.hidden = false;
-            clothingImage.hidden = false;
+        const formData = new FormData();
+        formData.append("model", model);
+        formData.append("clothing", clothing);
 
-            const modelURL = URL.createObjectURL(model);
-            const clothingURL = URL.createObjectURL(clothing);
+        status.textContent = "Uploading...";
 
-            modelImage.src = modelURL;
-            clothingImage.src = clothingURL;
+        const res = await fetch("https://api.thechangingroom.shop/tryon", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${accessToken}` },
+          body: formData
+        });
 
-            const formData = new FormData();
-            formData.append("model", model);
-            formData.append("clothing", clothing);
+        const { job_id } = await res.json();
 
-            try {
-                status.textContent = "Uploading...";
+        status.textContent = "Generating...";
 
-                const res = await fetch("https://api.thechangingroom.shop/tryon", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                },
-                body: formData
-                });
+        const interval = setInterval(async () => {
+          const res = await fetch(
+            `https://api.thechangingroom.shop/result/${job_id}`,
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+          );
 
-                if (!res.ok) throw new Error("Upload failed");
+          const data = await res.json();
 
-                const { job_id } = await res.json();
-                status.textContent = "Generating try-on...";
-
-                let attempts = 0;
-                const maxAttempts = 30; // 30 * 4s = 2 minutes
-
-                const interval = setInterval(async () => {
-                try {
-                    attempts++;
-
-                    const res = await fetch(
-                    `https://api.thechangingroom.shop/result/${job_id}`,
-                    { headers: { Authorization: `Bearer ${accessToken}` } }
-                    );
-                    if (!res.ok) throw new Error("Polling failed");
-
-                    const data = await res.json();
-
-                    if (data.status === "COMPLETED") {
-                    clearInterval(interval);
-                    resultImg.src = data.result_url;
-                    status.textContent = "✅ Done!";
-                    URL.revokeObjectURL(modelURL);
-                    URL.revokeObjectURL(clothingURL);
-                    }
-
-                    if (data.status === "FAILED") {
-                    clearInterval(interval);
-                    status.textContent = "❌ Generation failed";
-                    }
-
-                    if (attempts >= maxAttempts) {
-                    clearInterval(interval);
-                    status.textContent = "⏰ Timed out";
-                    }
-
-                } catch (err) {
-                    clearInterval(interval);
-                    status.textContent = "❌ Error while polling";
-                    console.error(err);
-                }
-                }, 4000);
-
-            } catch (err) {
-                status.textContent = "❌ Upload error";
-                console.error(err);
-            }
-            }
-        </script>
-    </body>
+          if (data.status === "COMPLETED") {
+            clearInterval(interval);
+            document.getElementById("result").src = data.result_url;
+            document.getElementById("result").hidden = false;
+            status.textContent = "Done";
+          }
+        }, 4000);
+      };
+    </script>
+  </body>
 </html>
