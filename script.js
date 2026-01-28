@@ -129,5 +129,4 @@ async function uploadTryOn() {
   }
 }
 
-// ---------- Button listener ----------
 document.getElementById("generateTryOn").addEventListener("click", uploadTryOn);
