@@ -1,3 +1,11 @@
+const loginWithGoogle = document.getElementById("loginWithGoogle");
+
+loginWithGoogle.addEventListener("click", async () => {
+  await supabase.auth.signInWithOAuth({
+    provider: "google"
+  });
+})
+
 async function uploadTryOn() {
   const model = document.getElementById("model").files[0];
   const clothing = document.getElementById("clothing").files[0];
