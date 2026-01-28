@@ -1,10 +1,23 @@
-const loginWithGoogle = document.getElementById("loginWithGoogle");
+import { createClient } from '@supabase/supabase-js';
 
-loginWithGoogle.addEventListener("click", async () => {
-  await supabase.auth.signInWithOAuth({
-    provider: "google"
+const supabase = createClient(
+  'https://gneuratxejzbyhgpzatk.supabase.co',
+  'sb_publishable_U3sKYX4eq4H5Bslfu0ErJA_ts8-8hT0'
+);
+
+async function signInWithGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
   });
-})
+
+  if (error) {
+    console.error(error);
+  } else {
+    // Supabase redirects to Google login, then back to your frontend
+  }
+}
+const loginWithGoogle = document.getElementById("loginWithGoogle");
+loginWithGoogle.addEventListener("click", signInWithGoogle);
 
 async function uploadTryOn() {
   const model = document.getElementById("model").files[0];
