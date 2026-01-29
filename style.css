@@ -37,6 +37,12 @@ body {
       display: flex;
       justify-content: center;
     }
+    #uploadModelImage {
+      background-color: transparent;
+      display: inline-block;
+      display: flex;
+      justify-content: center;
+    }
     #forModel:hover {
       cursor: pointer;
       opacity: 80%;
@@ -134,14 +140,34 @@ body {
       max-height: 400px;
       object-fit: contain;
     }
+    #forLoginWithGoogle {
+      background-color: rgb(0, 0, 0);
+      border-radius: 14px;
+
+      width: 300px;
+
+      padding: 15px 30px;
+      position: fixed;
+      top: 4%;
+      left: 3%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     #loginWithGoogle {
-      background-color: rgb(255, 255, 255);
-      color: rgb(0, 0, 0);
-      border: 1px solid rgb(0, 0, 0);
+      font-family: "Montserrat", sans-serif;
+      font-size: 1.5vw;
+      background-color: transparent;
+      color: rgb(255, 255, 255);
+      border: none;
+      border-radius: 3px;
+    }
+    #loginWithGoogle:hover {
+      opacity: 0.8;
+      cursor: pointer;
     }
 }
-
-
 
 
 

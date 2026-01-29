@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+    <link rel="stylesheet" href="style.css" />
+    <title>TheChangingRoom</title>
+  </head>
+  <body>
+
+    <h1 id="titleHeader">The Changing Room</h1>
+
+    <div id="forForModel">
+      <!-- <img id="uploadModelImage" src="images/upload.png" alt="*upload button*" width="50px"> -->
+      <label id="forModel" for="model">Upload model</label>
+    </div>
+    <input type="file" id="model" accept="image/*" hidden />
+
+    <div id="forForClothing">
+      <label id="forClothing" for="clothing">Upload clothing</label>
+    </div>
+    <input type="file" id="clothing" accept="image/*" hidden />
+
+    <button id="generateTryon">Generate Try-On</button>
+
+    <p id="status"></p>
+
+    <div class="previewGrid">
+      <img id="modelPreview" width="150" hidden />
+      <img id="clothingPreview" width="150" hidden />
+      <img id="result" width="300" hidden />
+    </div>
+
+    <button id="upgradeButton">Upgrade Plan</button>
+    <div id="forLoginWithGoogle">
+      <img src="images/google.png" alt="google logo">
+      <button id="loginWithGoogle">Login with Google</button>
+    </div>
+
+
+
+
+
+
+
+
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+      const supabase = createClient(
+        "https://gneuratxejzbyhgpzatk.supabase.co",
+        "sb_publishable_U3sKYX4eq4H5Bslfu0ErJA_ts8-8hT0"
+      );
+
+      let accessToken = null;
+
+      const status = document.getElementById("status");
+      const loginBtn = document.getElementById("loginWithGoogle");
+      const generateBtn = document.getElementById("generateTryon");
+      const forLogin = document.getElementById("forForLoginWithGoogle");
+      const googleImage = document.getElementById("googleImage");
+
+      // ---------- LOGIN ----------
+      loginBtn.onclick = async () => {
+        await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: "https://thechangingroom.shop/main.html"
+          }
+        });
+      };
+
+      // ---------- AUTH STATE ----------
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (session?.access_token) {
+          accessToken = session.access_token;
+          status.textContent = `Logged in as ${session.user.email}`;
+          loginBtn.style.display = "none";
+          forLogin.style.display = "none";
+          googleImage.style.display = "none";
+        }
+      });
+
+      // ---------- TRYON ----------
+      generateBtn.onclick = async () => {
+        if (!accessToken) {
+          alert("Login first");
+          return;
+        }
+
+        const model = document.getElementById("model").files[0];
+        const clothing = document.getElementById("clothing").files[0];
+
+        if (!model || !clothing) {
+          alert("Select both images");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("model", model);
+        formData.append("clothing", clothing);
+
+        status.textContent = "Uploading...";
+
+        const res = await fetch("https://api.thechangingroom.shop/tryon", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${accessToken}` },
+          body: formData
+        });
+
+        const { job_id } = await res.json();
+
+        status.textContent = "Generating...";
+
+        const interval = setInterval(async () => {
+          const res = await fetch(
+            `https://api.thechangingroom.shop/result/${job_id}`,
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+          );
+
+          const data = await res.json();
+
+          if (data.status === "COMPLETED") {
+            clearInterval(interval);
+            document.getElementById("result").src = data.result_url;
+            document.getElementById("result").hidden = false;
+            status.textContent = "Done";
+          }
+        }, 4000);
+      };
+    </script>
+  </body>
+</html>

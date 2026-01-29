@@ -14,6 +14,7 @@
     <h1 id="titleHeader">The Changing Room</h1>
 
     <div id="forForModel">
+      <!-- <img id="uploadModelImage" src="images/upload.png" alt="*upload button*" width="50px"> -->
       <label id="forModel" for="model">Upload model</label>
     </div>
     <input type="file" id="model" accept="image/*" hidden />
@@ -34,7 +35,10 @@
     </div>
 
     <button id="upgradeButton">Upgrade Plan</button>
-    <button id="loginWithGoogle">Login with Google</button>
+    <div id="forLoginWithGoogle">
+      <img src="images/google.png" alt="google logo">
+      <button id="loginWithGoogle">Login with Google</button>
+    </div>
 
 
 
@@ -43,14 +47,6 @@
 
 
 
-
-
-
-
-
-
-
-    
     <script type="module">
       import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
@@ -64,13 +60,15 @@
       const status = document.getElementById("status");
       const loginBtn = document.getElementById("loginWithGoogle");
       const generateBtn = document.getElementById("generateTryon");
+      const forLogin = document.getElementById("forForLoginWithGoogle");
+      const googleImage = document.getElementById("googleImage");
 
       // ---------- LOGIN ----------
       loginBtn.onclick = async () => {
         await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: "https://thechangingroom.shop/"
+            redirectTo: "https://thechangingroom.shop/main.html"
           }
         });
       };
@@ -81,6 +79,8 @@
           accessToken = session.access_token;
           status.textContent = `Logged in as ${session.user.email}`;
           loginBtn.style.display = "none";
+          forLogin.style.display = "none";
+          googleImage.style.display = "none";
         }
       });
 
