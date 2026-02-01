@@ -54,137 +54,158 @@
     
 
   <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    const supabase = createClient(
-      "https://gneuratxejzbyhgpzatk.supabase.co",
-      "sb_publishable_U3sKYX4eq4H5Bslfu0ErJA_ts8-8hT0"
-    );
+  const supabase = createClient(
+    "https://gneuratxejzbyhgpzatk.supabase.co",
+    "sb_publishable_U3sKYX4eq4H5Bslfu0ErJA_ts8-8hT0"
+  );
 
-    let accessToken = null;
+  let accessToken = null;
 
-    const status = document.getElementById("status");
-    const loginBtn = document.getElementById("loginWithGoogle");
-    const generateBtn = document.getElementById("generateTryon");
-    const forLogin = document.getElementById("forLoginWithGoogle");
-    const googleImage = document.getElementById("googleImage");
-
-    const modelInput = document.getElementById("model");
-    const clothingInput = document.getElementById("clothing");
-    const modelPreview = document.getElementById("modelPreview");
-    const clothingPreview = document.getElementById("clothingPreview");
-    const resultImg = document.getElementById("result");
-
-    // ---------- LOGIN ----------
-    loginBtn.onclick = async () => {
-      await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: "https://thechangingroom.shop" }
-      });
-    };
-
-    // ---------- AUTH STATE ----------
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.access_token) {
-        accessToken = session.access_token;
-        status.textContent = `Logged in as ${session.user.email}`;
-        loginBtn.style.display = "none";
-        forLogin.style.display = "none";
-        googleImage.style.display = "none";
-      }
-    });
-
+  const status = document.getElementById("status");
+  const loginBtn = document.getElementById("loginWithGoogle");
+  const generateBtn = document.getElementById("generateTryon");
+  const forLogin = document.getElementById("forLoginWithGoogle");
+  const googleImage = document.getElementById("googleImage");
   const upgradeBtn = document.getElementById("upgradeButton");
 
-  upgradeBtn.onclick = () => {
+  const modelInput = document.getElementById("model");
+  const clothingInput = document.getElementById("clothing");
+  const modelPreview = document.getElementById("modelPreview");
+  const clothingPreview = document.getElementById("clothingPreview");
+  const resultImg = document.getElementById("result");
+
+  // ---------- LOGIN ----------
+  loginBtn.onclick = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: "https://thechangingroom.shop" }
+    });
+  };
+
+  // ---------- AUTH STATE ----------
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (session?.access_token) {
+      accessToken = session.access_token;
+      status.textContent = `Logged in as ${session.user.email}`;
+      loginBtn.style.display = "none";
+      forLogin.style.display = "none";
+      googleImage.style.display = "none";
+    }
+  });
+
+  // ---------- FILE PREVIEWS ----------
+  modelInput.addEventListener("change", () => {
+    const file = modelInput.files[0];
+    if (file) {
+      modelPreview.src = URL.createObjectURL(file);
+      modelPreview.hidden = false;
+    }
+  });
+
+  clothingInput.addEventListener("change", () => {
+    const file = clothingInput.files[0];
+    if (file) {
+      clothingPreview.src = URL.createObjectURL(file);
+      clothingPreview.hidden = false;
+    }
+  });
+
+  // ---------- TRY-ON ----------
+  generateBtn.onclick = async () => {
+    if (!accessToken) {
+      alert("Login first");
+      return;
+    }
+
+    const modelFile = modelInput.files[0];
+    const clothingFile = clothingInput.files[0];
+
+    if (!modelFile || !clothingFile) {
+      alert("Select both images");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("model", modelFile);
+    formData.append("clothing", clothingFile);
+
+    generateBtn.disabled = true;
+    status.textContent = "Uploading...";
+
+    try {
+      const res = await fetch("https://api.thechangingroom.shop/tryon", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}` },
+        body: formData
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Try-On failed");
+      }
+
+      const { job_id } = await res.json();
+      status.textContent = "Generating...";
+
+      // Poll for result
+      const interval = setInterval(async () => {
+        const res = await fetch(`https://api.thechangingroom.shop/result/${job_id}`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.status === "COMPLETED") {
+          clearInterval(interval);
+          resultImg.src = data.result_url;
+          resultImg.hidden = false;
+          status.textContent = "Done!";
+          generateBtn.disabled = false;
+        }
+      }, 4000);
+    } catch (err) {
+      status.textContent = `Error: ${err.message}`;
+      generateBtn.disabled = false;
+    }
+  };
+
+  // ---------- UPGRADE BUTTON ----------
+  upgradeBtn.onclick = async () => {
     if (!accessToken) {
       alert("Login first to upgrade your plan");
       return;
     }
 
-    // Redirect to your upgrade page (or open Stripe, whatever your flow is)
-    window.location.href = "https://thechangingroom.shop/upgrade";
+    const creditsToBuy = 5; // example, could ask user for input
+    try {
+      const res = await fetch("https://api.thechangingroom.shop/paypal/create-order", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ credits: creditsToBuy })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to create PayPal order");
+      }
+
+      const { approvalUrl } = await res.json();
+      if (!approvalUrl) throw new Error("No approval URL returned");
+
+      // Redirect user to PayPal checkout
+      window.location.href = approvalUrl;
+
+    } catch (err) {
+      alert("Upgrade failed: " + err.message);
+    }
   };
-
-
-    // ---------- FILE PREVIEWS ----------
-    modelInput.addEventListener("change", () => {
-      const file = modelInput.files[0];
-      if (file) {
-        modelPreview.src = URL.createObjectURL(file);
-        modelPreview.hidden = false;
-      }
-    });
-
-    clothingInput.addEventListener("change", () => {
-      const file = clothingInput.files[0];
-      if (file) {
-        clothingPreview.src = URL.createObjectURL(file);
-        clothingPreview.hidden = false;
-      }
-    });
-
-    // ---------- TRY-ON ----------
-    generateBtn.onclick = async () => {
-      if (!accessToken) {
-        alert("Login first");
-        return;
-      }
-
-      const modelFile = modelInput.files[0];
-      const clothingFile = clothingInput.files[0];
-
-      if (!modelFile || !clothingFile) {
-        alert("Select both images");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("model", modelFile);
-      formData.append("clothing", clothingFile);
-
-      generateBtn.disabled = true;
-      status.textContent = "Uploading...";
-
-      try {
-        const res = await fetch("https://api.thechangingroom.shop/tryon", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${accessToken}` },
-          body: formData
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || "Try-On failed");
-        }
-
-        const { job_id } = await res.json();
-        status.textContent = "Generating...";
-
-        // Poll for result
-        const interval = setInterval(async () => {
-          const res = await fetch(`https://api.thechangingroom.shop/result/${job_id}`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
-
-          if (!res.ok) return; // skip until valid response
-          const data = await res.json();
-
-          if (data.status === "COMPLETED") {
-            clearInterval(interval);
-            resultImg.src = data.result_url;
-            resultImg.hidden = false;
-            status.textContent = "Done!";
-            generateBtn.disabled = false;
-          }
-        }, 4000);
-
-      } catch (err) {
-        status.textContent = `Error: ${err.message}`;
-        generateBtn.disabled = false;
-      }
-    };
   </script>
+
 
   </body>
 </html>
