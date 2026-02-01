@@ -94,6 +94,19 @@
       }
     });
 
+  const upgradeBtn = document.getElementById("upgradeButton");
+
+  upgradeBtn.onclick = () => {
+    if (!accessToken) {
+      alert("Login first to upgrade your plan");
+      return;
+    }
+
+    // Redirect to your upgrade page (or open Stripe, whatever your flow is)
+    window.location.href = "https://thechangingroom.shop/upgrade";
+  };
+
+
     // ---------- FILE PREVIEWS ----------
     modelInput.addEventListener("change", () => {
       const file = modelInput.files[0];
