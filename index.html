@@ -1,174 +1,177 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Changing Room</title>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
-    <link rel="stylesheet" href="style.css" />
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-      body { font-family: 'Montserrat', sans-serif; padding: 20px; }
-      #status { margin: 10px 0; font-weight: bold; }
-      .previewGrid img { margin: 5px; border: 1px solid #ccc; }
-      button:disabled { opacity: 0.6; cursor: not-allowed; }
     </style>
+    <link rel="stylesheet" href="style.css" />
+    <title>TheChangingRoom</title>
   </head>
   <body>
+
     <h1 id="titleHeader">The Changing Room</h1>
 
-    <!-- Login -->
-    <div id="forLoginWithGoogle">
-      <img id="googleImage" src="images/google.png" alt="Google logo" width="20" />
-      <button id="loginWithGoogle">Login with Google</button>
-    </div>
-
-    <p id="status"></p>
-
-    <!-- Upload model -->
     <div id="forForModel">
-      <label for="model">Upload Model</label>
+      <!-- <img id="uploadModelImage" src="images/upload.png" alt="*upload button*" width="50px"> -->
+      <label id="forModel" for="model">Upload model</label>
     </div>
     <input type="file" id="model" accept="image/*" hidden />
 
-    <!-- Upload clothing -->
     <div id="forForClothing">
-      <label for="clothing">Upload Clothing</label>
+      <label id="forClothing" for="clothing">Upload clothing</label>
     </div>
     <input type="file" id="clothing" accept="image/*" hidden />
 
-    <!-- Try-On Button -->
     <button id="generateTryon">Generate Try-On</button>
 
-    <!-- Image previews -->
+    <p id="status"></p>
+
     <div class="previewGrid">
       <img id="modelPreview" width="150" hidden />
       <img id="clothingPreview" width="150" hidden />
       <img id="result" width="300" hidden />
     </div>
 
-    <!-- Upgrade Button (optional) -->
     <button id="upgradeButton">Upgrade Plan</button>
+    <div id="forLoginWithGoogle">
+      <img id="googleImage" src="images/google.png" alt="google logo">
+      <button id="loginWithGoogle">Login with Google</button>
+    </div>
 
-    <script type="module">
-      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-      // ---------- Supabase client ----------
-      const supabase = createClient(
-        "https://gneuratxejzbyhgpzatk.supabase.co",
-        "sb_publishable_U3sKYX4eq4H5Bslfu0ErJA_ts8-8hT0"
-      );
 
-      let accessToken = null;
 
-      // ---------- DOM elements ----------
-      const status = document.getElementById("status");
-      const loginBtn = document.getElementById("loginWithGoogle");
-      const generateBtn = document.getElementById("generateTryon");
-      const forLogin = document.getElementById("forLoginWithGoogle");
-      const googleImage = document.getElementById("googleImage");
-      const modelInput = document.getElementById("model");
-      const clothingInput = document.getElementById("clothing");
-      const modelPreview = document.getElementById("modelPreview");
-      const clothingPreview = document.getElementById("clothingPreview");
-      const resultImg = document.getElementById("result");
 
-      // ---------- LOGIN ----------
-      loginBtn.onclick = async () => {
-        await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: { redirectTo: "https://thechangingroom.shop" }
+
+
+
+
+
+
+
+    
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+      "https://gneuratxejzbyhgpzatk.supabase.co",
+      "sb_publishable_U3sKYX4eq4H5Bslfu0ErJA_ts8-8hT0"
+    );
+
+    let accessToken = null;
+
+    const status = document.getElementById("status");
+    const loginBtn = document.getElementById("loginWithGoogle");
+    const generateBtn = document.getElementById("generateTryon");
+    const forLogin = document.getElementById("forLoginWithGoogle");
+    const googleImage = document.getElementById("googleImage");
+
+    const modelInput = document.getElementById("model");
+    const clothingInput = document.getElementById("clothing");
+    const modelPreview = document.getElementById("modelPreview");
+    const clothingPreview = document.getElementById("clothingPreview");
+    const resultImg = document.getElementById("result");
+
+    // ---------- LOGIN ----------
+    loginBtn.onclick = async () => {
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: "https://thechangingroom.shop" }
+      });
+    };
+
+    // ---------- AUTH STATE ----------
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.access_token) {
+        accessToken = session.access_token;
+        status.textContent = `Logged in as ${session.user.email}`;
+        loginBtn.style.display = "none";
+        forLogin.style.display = "none";
+        googleImage.style.display = "none";
+      }
+    });
+
+    // ---------- FILE PREVIEWS ----------
+    modelInput.addEventListener("change", () => {
+      const file = modelInput.files[0];
+      if (file) {
+        modelPreview.src = URL.createObjectURL(file);
+        modelPreview.hidden = false;
+      }
+    });
+
+    clothingInput.addEventListener("change", () => {
+      const file = clothingInput.files[0];
+      if (file) {
+        clothingPreview.src = URL.createObjectURL(file);
+        clothingPreview.hidden = false;
+      }
+    });
+
+    // ---------- TRY-ON ----------
+    generateBtn.onclick = async () => {
+      if (!accessToken) {
+        alert("Login first");
+        return;
+      }
+
+      const modelFile = modelInput.files[0];
+      const clothingFile = clothingInput.files[0];
+
+      if (!modelFile || !clothingFile) {
+        alert("Select both images");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("model", modelFile);
+      formData.append("clothing", clothingFile);
+
+      generateBtn.disabled = true;
+      status.textContent = "Uploading...";
+
+      try {
+        const res = await fetch("https://api.thechangingroom.shop/tryon", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${accessToken}` },
+          body: formData
         });
-      };
 
-      // ---------- AUTH STATE ----------
-      supabase.auth.onAuthStateChange((event, session) => {
-        if (session?.access_token) {
-          accessToken = session.access_token;
-          status.textContent = `Logged in as ${session.user.email}`;
-          loginBtn.style.display = "none";
-          forLogin.style.display = "none";
-          googleImage.style.display = "none";
-        }
-      });
-
-      // ---------- FILE PREVIEWS ----------
-      modelInput.addEventListener("change", () => {
-        const file = modelInput.files[0];
-        if (file) {
-          modelPreview.src = URL.createObjectURL(file);
-          modelPreview.hidden = false;
-        }
-      });
-
-      clothingInput.addEventListener("change", () => {
-        const file = clothingInput.files[0];
-        if (file) {
-          clothingPreview.src = URL.createObjectURL(file);
-          clothingPreview.hidden = false;
-        }
-      });
-
-      // ---------- TRY-ON ----------
-      generateBtn.onclick = async () => {
-        if (!accessToken) {
-          alert("Please log in first");
-          return;
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Try-On failed");
         }
 
-        const modelFile = modelInput.files[0];
-        const clothingFile = clothingInput.files[0];
+        const { job_id } = await res.json();
+        status.textContent = "Generating...";
 
-        if (!modelFile || !clothingFile) {
-          alert("Select both model and clothing images");
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append("model", modelFile);
-        formData.append("clothing", clothingFile);
-
-        // Disable button while processing
-        generateBtn.disabled = true;
-        status.textContent = "Uploading...";
-
-        try {
-          const res = await fetch("https://api.thechangingroom.shop/tryon", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${accessToken}` },
-            body: formData
+        // Poll for result
+        const interval = setInterval(async () => {
+          const res = await fetch(`https://api.thechangingroom.shop/result/${job_id}`, {
+            headers: { Authorization: `Bearer ${accessToken}` }
           });
 
-          if (!res.ok) {
-            const err = await res.json();
-            throw new Error(err.error || "Try-On failed");
+          if (!res.ok) return; // skip until valid response
+          const data = await res.json();
+
+          if (data.status === "COMPLETED") {
+            clearInterval(interval);
+            resultImg.src = data.result_url;
+            resultImg.hidden = false;
+            status.textContent = "Done!";
+            generateBtn.disabled = false;
           }
+        }, 4000);
 
-          const { job_id } = await res.json();
-          status.textContent = "Generating...";
+      } catch (err) {
+        status.textContent = `Error: ${err.message}`;
+        generateBtn.disabled = false;
+      }
+    };
+  </script>
 
-          // Poll for result
-          const interval = setInterval(async () => {
-            const res = await fetch(`https://api.thechangingroom.shop/result/${job_id}`, {
-              headers: { Authorization: `Bearer ${accessToken}` }
-            });
-
-            if (!res.ok) return; // skip until valid response
-            const data = await res.json();
-
-            if (data.status === "COMPLETED") {
-              clearInterval(interval);
-              resultImg.src = data.result_url;
-              resultImg.hidden = false;
-              status.textContent = "Done!";
-              generateBtn.disabled = false;
-            }
-          }, 4000);
-        } catch (err) {
-          status.textContent = `Error: ${err.message}`;
-          generateBtn.disabled = false;
-        }
-      };
-    </script>
   </body>
 </html>
